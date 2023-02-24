@@ -1,5 +1,5 @@
 const notesRouter = require('express').Router()
-
+const jwt = require('jsonwebtoken')
 const Note = require('../models/note')
 const User = require('../models/user')
 
@@ -18,8 +18,8 @@ notesRouter.get('/:id',async  (request, response, next) => {
 
 notesRouter.post('/', async (request, response, next) => {
   const body = request.body
-  const user = await User.findById(body.userId)
-
+  const user = request.user
+ console.log(user)
   const note = new Note({
     content: body.content,
     important: body.important || false,

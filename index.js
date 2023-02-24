@@ -1,46 +1,28 @@
 const express = require('express')
+const mongoose = require('mongoose')
+const { mongouri } = require('./secrets')
+
+const notesRouter = require('./controllers/notes')
+const usersRouter = require('./controllers/users')
+
 const app = express()
 
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    important: true
-  },
-  {
-    id: 2,
-    content: "Browser can execute only JavaScript",
-    important: false
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true
-  }
-]
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
-})
+app.use(express.json())
 
-app.get('/api/notes', (request, response) => {
-  response.json(notes)
-})
+app.use('/api/users', usersRouter)
+app.use('/api/notes', notesRouter)
 
-app.get('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const note = notes.find(note => note.id === id)
-  if (note) {
-    response.json(note)
-  } else {
-    response.status(404).end()
-  }
-})
-app.delete('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  notes = notes.filter(note => note.id !== id)
+mongoose.set('strictQuery',false)
+mongoose.connect(mongouri)
 
-  response.status(204).end()
-})
+mongoose.connect(mongouri)
+  .then(result => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connecting to MongoDB:', error.message)
+  })
+
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

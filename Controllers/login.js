@@ -8,8 +8,6 @@ const secret = process.env.SECRETKEY
 
 loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body
-  console.log('hello')
-  console.log(username,password)
   const user = await User.findOne({ username })
   const passwordCorrect = user === null
     ? false

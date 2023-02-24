@@ -1,7 +1,5 @@
 const notesRouter = require('express').Router()
-const jwt = require('jsonwebtoken')
 const Note = require('../models/note')
-const User = require('../models/user')
 
 notesRouter.get('/', async (request, response) => {
   const notes = await Note
@@ -34,8 +32,17 @@ notesRouter.post('/', async (request, response, next) => {
 })
 
 notesRouter.delete('/:id',  async (request, response, next) => {
-  await Note.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+  const note = await Note.findById(request.params.id)
+  if(note.user.toString() === request.user.id.toString()){
+    await Note.findByIdAndRemove(request.params.id)
+    response.status(204).end()
+  }else{
+    return response.status(401).json({
+      error: 'invalid user'
+    })
+  }
+
+ 
 })
 
 notesRouter.put('/:id', async (request, response, next) => {
@@ -45,10 +52,16 @@ notesRouter.put('/:id', async (request, response, next) => {
     content: body.content,
     important: body.important,
   }
+  const foundNote = await Note.findById(request.params.id)
+  if(foundNote.user.toString() === request.user.id.toString()){
+    const updatedNote = await Note.findByIdAndUpdate(request.params.id, note, { new: true })
+    response.json(updatedNote)
+  }else{
+    return response.status(401).json({
+      error: 'invalid user'
+    })
+  }
 
-  const updatedNote = await Note.findByIdAndUpdate(request.params.id, note, { new: true })
-  
-  response.json(updatedNote)
 })
 
 module.exports = notesRouter

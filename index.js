@@ -13,10 +13,9 @@ const app = express()
 app.use(express.json())
 
 app.use(tokenExtractor)
-
 app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
-app.use('/api/notes', userExtractor, notesRouter)
+app.use('/api/notes',userExtractor, notesRouter)
 
 
 const uri = process.env.MONGODB_URI

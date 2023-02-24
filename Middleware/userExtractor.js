@@ -2,6 +2,8 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
 const userExtractor = async(request, response, next) => {
+  console.log('user extractor')
+  console.log(request.token)
   const decodedToken = jwt.verify(request.token, process.env.SECRETKEY)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })

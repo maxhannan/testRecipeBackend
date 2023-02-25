@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
 require('dotenv').config()
 
 const notesRouter = require('./controllers/notes')
@@ -10,7 +11,7 @@ const tokenExtractor = require('./Middleware/tokenExtractor')
 const userExtractor = require('./Middleware/userExtractor')
 
 const app = express()
-
+app.use(cors())
 app.use(express.json())
 // Custom Middleware
 app.use(tokenExtractor)
